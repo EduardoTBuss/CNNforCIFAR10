@@ -3,6 +3,7 @@ import tensorflow_datasets as tfds
 import matplotlib.pyplot as plt
 
 IMG_SIZE = 32
+RADMANN = 10
 
 def normalize ( image , label):
     image = tf.image.resize(image , [IMG_SIZE , IMG_SIZE])
