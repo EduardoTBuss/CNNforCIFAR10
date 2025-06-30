@@ -2,49 +2,60 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 import matplotlib.pyplot as plt
 
-IMG_SIZE = 32
+IMG_SIZE = 64
+BATCH_SIZE = 64
+LEARNING_RATE = 0.001
+EPOCA = 30
+
 
 def normalize ( image , label):
     image = tf.image.resize(image , [IMG_SIZE , IMG_SIZE])
     image = image / 255.0
     return image , label
 
-(ds_train, ds_test), ds_info = tfds.load('cifar10', split=['train[:80%]', 'train[80%:]'],  as_supervised = True, with_info = True)
-
-data_augmentation = tf.keras.Sequential([
-    tf.keras.layers.RandomFlip("horizontal"),
-    tf.keras.layers.RandomRotation(0.1),
-    tf.keras.layers.RandomZoom(0.1),
-    tf.keras.layers.RandomTranslation(0.1, 0.1),
-])
+(ds_train, ds_test), ds_info = tfds.load('cifar10', split=['train[:90%]', 'train[90%:]'],  as_supervised = True, with_info = True)
 
 
-train = ds_train.map(normalize).map(lambda x, y: (data_augmentation(x), y)).shuffle(1000).batch(128).prefetch(1)
-test = ds_test.map(normalize).shuffle(1000).batch(128).prefetch(1)
+train = ds_train.map(normalize).shuffle(1000).batch(BATCH_SIZE).prefetch(1)
+test = ds_test.map(normalize).batch(1000).prefetch(1)
 
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Conv2D(16, (3, 3) , activation = "relu" , input_shape = (IMG_SIZE , IMG_SIZE , 3)),
-    
-    tf.keras.layers.Conv2D(32 , (3, 3) , activation = "relu"),
+    tf.keras.layers.Conv2D(16, (3, 3) , activation = "relu" , padding='same' , input_shape = (IMG_SIZE , IMG_SIZE , 3)),
+    tf.keras.layers.BatchNormalization(),
     tf.keras.layers.MaxPooling2D( 2 , 2),
+    tf.keras.layers.Dropout(0.2),
     
-    tf.keras.layers.Conv2D(64 , (3, 3) , activation = "relu" ),
+    tf.keras.layers.Conv2D(32 , (3, 3) , activation = "relu" ,padding='same' ),
+    tf.keras.layers.BatchNormalization(),
     tf.keras.layers.MaxPooling2D( 2 , 2),
+    tf.keras.layers.Dropout(0.25),
     
-    tf.keras.layers.Conv2D(128 , (3, 3) , activation = "relu"),
+    tf.keras.layers.Conv2D(64 , (3, 3) , activation = "relu" ,padding='same' ),
+    tf.keras.layers.BatchNormalization(),
     tf.keras.layers.MaxPooling2D( 2 , 2),
+    tf.keras.layers.Dropout(0.3),
+    
+    tf.keras.layers.Conv2D(128 , (3, 3) , activation = "relu" , padding='same'),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling2D( 2 , 2),
+    tf.keras.layers.Dropout(0.3),
+    
+    tf.keras.layers.Conv2D(256 , (3, 3) , activation = "relu" ,padding='same' ),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.MaxPooling2D( 2 , 2),
+    tf.keras.layers.Dropout(0.4),
     
     tf.keras.layers.Flatten(),
     
-    tf.keras.layers.Dense( 128 , activation = "relu"),
-    tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Dense(10)
+    tf.keras.layers.Dense( 256 , activation = "relu"),
+    tf.keras.layers.Dropout(0.6),
+    tf.keras.layers.Dense(10 , activation = "softmax")
 ])
 
 
 model.compile(
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.00001),
+    optimizer = tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9, decay = 0.0001),
     loss = "sparse_categorical_crossentropy",
     metrics = ["accuracy"]
 )
@@ -52,10 +63,16 @@ model.compile(
 
 history = model.fit(
     train,
-    epochs = 200,                 
-    validation_data=test,       
-    verbose=1
+    epochs = EPOCA,                 
+    validation_data = test,       
+    verbose = 1
 )
+
+loss, accuracy = model.evaluate(test)
+print(f"\n🔍 Avaliação no conjunto de teste:")
+print(f"Loss: {loss:.4f}")
+print(f"Acurácia: {accuracy*100:.2f}%")
+
 
 plt.figure(figsize=(8,5))
 plt.plot(history.history['loss'], label='treino')
