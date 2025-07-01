@@ -1,8 +1,6 @@
 
-IMG_SIZE     = 64
-BATCH_SIZE   = 64
-LEARNING_RATE= 0.01
-EPOCHS       = 15
+BATCH_SIZE    = 32
+LEARNING_RATE = 0.001
+EPOCHS        = 100
 
-
-OUTPUT_DIR   = "plots"
+OUTPUT_DIR    = "plots"

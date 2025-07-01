@@ -3,35 +3,35 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from config import OUTPUT_DIR
 
-def plot_loss(history, filename="loss.png"):
+def plot_loss(history, filename = "loss.png"):
     plt.figure(figsize=(8,5))
-    plt.plot(history.history['loss'], label='Treino')
-    plt.plot(history.history['val_loss'], label='Validação')
+    plt.plot(history.history['loss'], label = 'Treino')
+    plt.plot(history.history['val_loss'], label = 'Validação')
     plt.title('Curva de Loss por Época')
     plt.xlabel('Época')
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
     path = os.path.join(OUTPUT_DIR, filename)
-    plt.savefig(path, dpi=300, bbox_inches='tight')
+    plt.savefig(path, dpi = 300, bbox_inches = 'tight')
     plt.close()
     print(f"[+] Loss salvo em {path}")
 
-def plot_accuracy(history, filename="accuracy.png"):
+def plot_accuracy(history, filename = "accuracy.png"):
     plt.figure(figsize=(8,5))
-    plt.plot(history.history['accuracy'], label='Treino')
-    plt.plot(history.history['val_accuracy'], label='Validação')
+    plt.plot(history.history['accuracy'], label = 'Treino')
+    plt.plot(history.history['val_accuracy'], label = 'Validação')
     plt.title('Curva de Acurácia por Época')
     plt.xlabel('Época')
     plt.ylabel('Acurácia')
     plt.legend()
     plt.grid(True)
     path = os.path.join(OUTPUT_DIR, filename)
-    plt.savefig(path, dpi=300, bbox_inches='tight')
+    plt.savefig(path, dpi = 300, bbox_inches = 'tight')
     plt.close()
     print(f"[+] Acurácia salva em {path}")
 
-def show_cifar10_predictions(model, test_data, class_names, num_images=16, filename="predictions.png"):
+def show_cifar10_predictions(model, test_data, class_names, num_images = 16, filename = "predictions.png"):
     images, labels = next(iter(test_data))
     preds = model.predict(images)
     n = int(num_images**0.5)
@@ -48,6 +48,6 @@ def show_cifar10_predictions(model, test_data, class_names, num_images=16, filen
     plt.tight_layout()
 
     path = os.path.join(OUTPUT_DIR, filename)
-    plt.savefig(path, dpi=300, bbox_inches='tight')
+    plt.savefig(path, dpi = 300, bbox_inches = 'tight')
     plt.close()
     print(f"[+] Previsões salvas em {path}")

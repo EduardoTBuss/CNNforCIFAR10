@@ -1,14 +1,17 @@
 import os
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from config import IMG_SIZE, BATCH_SIZE, OUTPUT_DIR
+from config import BATCH_SIZE, OUTPUT_DIR
 
-
-
+data_augmentation = tf.keras.Sequential([
+  tf.keras.layers.RandomFlip("horizontal"),
+  tf.keras.layers.RandomRotation(0.1),
+  tf.keras.layers.RandomZoom(0.1),
+])
 
 def normalize(image, label):
 
-    image = tf.image.resize(image, [IMG_SIZE, IMG_SIZE])
+    image = tf.image.resize(image, [32, 32])
     image = image / 255.0
     return image, label
 
@@ -24,6 +27,7 @@ def load_data():
     train = (
         ds_train
         .map(normalize)
+        .map(lambda x,y: (data_augmentation(x), y))
         .shuffle(1000)
         .batch(BATCH_SIZE)
         .prefetch(tf.data.AUTOTUNE)
@@ -31,7 +35,7 @@ def load_data():
     test = (
         ds_test
         .map(normalize)
-        .batch(1000)
+        .batch(BATCH_SIZE)
         .prefetch(tf.data.AUTOTUNE)
     )
 
