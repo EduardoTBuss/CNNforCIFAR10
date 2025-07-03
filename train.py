@@ -6,7 +6,7 @@ def train_model(model, train_data, val_data, epochs,):
         train_data,
         validation_data = val_data,
         epochs = epochs,
-        callbacks = tf.keras.callbacks.ReduceLROnPlateau(monitor = "val_loss", factor = 0.7, patience = 3),
+        callbacks = tf.keras.callbacks.ReduceLROnPlateau(monitor = "val_loss", factor = 0.4, patience = 7 , min_lr = 0.000001),
         verbose = 1
     )
 

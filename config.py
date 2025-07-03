@@ -1,6 +1,6 @@
 
 BATCH_SIZE    = 32
-LEARNING_RATE = 0.001
-EPOCHS        = 100
+LEARNING_RATE = 0.00001
+EPOCHS        = 150
 
 OUTPUT_DIR    = "plots"

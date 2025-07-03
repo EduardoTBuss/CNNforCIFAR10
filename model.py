@@ -12,15 +12,22 @@ def build_model():
         tf.keras.layers.Conv2D(128, (3,3), activation="relu", padding="same"),
         tf.keras.layers.MaxPooling2D(2,2),
 
+        tf.keras.layers.Conv2D(256, (3,3), activation="relu", padding="same"),
+        tf.keras.layers.MaxPooling2D(2,2),
+        
+        tf.keras.layers.Conv2D(512, (3,3), activation="relu", padding="same"),
+        tf.keras.layers.MaxPooling2D(2,2),
+
         tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(128, activation="relu"),
-        tf.keras.layers.Dropout(0.4),
+        tf.keras.layers.Dense(512, activation="relu"),
+        tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(10 , activation = "softmax")
     ])
 
+   
 
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(
+        optimizer = tf.keras.optimizers.Adam(
             learning_rate = LEARNING_RATE
         ),
         loss = "sparse_categorical_crossentropy",
