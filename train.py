@@ -6,7 +6,11 @@ from plot import plot_training
 
 def train_model(model, train_loader, test_loader, device):
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+
+    optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE,
+                        momentum=0.9, weight_decay=5e-4)
+    
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = EPOCHS)
 
     history = {"train_loss": [], "val_loss": [], "val_acc": []}
     best_acc = 0.0
@@ -43,6 +47,8 @@ def train_model(model, train_loader, test_loader, device):
         if val_acc > best_acc:
             best_acc = val_acc
             torch.save(model.state_dict(), "best_model.pth")
+
+        scheduler.step()
 
     plot_training(history)
     print(f"Melhor acurácia de validação: {best_acc:.2f}%")
