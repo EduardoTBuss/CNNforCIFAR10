@@ -1,5 +1,3 @@
-# main.py
-
 import torch
 from model import CNNModel
 from data import load_data
