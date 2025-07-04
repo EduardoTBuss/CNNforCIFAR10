@@ -1,45 +1,32 @@
-import os
-import tensorflow as tf
-import tensorflow_datasets as tfds
-from config import BATCH_SIZE, OUTPUT_DIR
+# data.py
 
-data_augmentation = tf.keras.Sequential([
-  tf.keras.layers.RandomFlip("horizontal"),
-  tf.keras.layers.RandomRotation(0.028),
-  tf.keras.layers.RandomZoom(0.1),
-])
-
-def normalize(image, label):
-
-    image = tf.image.resize(image, [32, 32])
-    image = image / 255.0
-    return image, label
+import torchvision
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+from config import IMG_SIZE, BATCH_SIZE
 
 def load_data():
-    
-    (ds_train, ds_test), ds_info = tfds.load(
-        'cifar10',
-        split=['train[:90%]', 'train[90%:]'],
-        as_supervised=True,
-        with_info=True
-    )
+    transform_train = transforms.Compose([
+        transforms.RandomCrop(IMG_SIZE, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465),
+                             (0.2470, 0.2435, 0.2616))
+    ])
 
-    train = (
-        ds_train
-        .map(normalize)
-        .map(lambda x,y: (data_augmentation(x), y))
-        .shuffle(1000)
-        .batch(BATCH_SIZE)
-        .prefetch(tf.data.AUTOTUNE)
-    )
-    test = (
-        ds_test
-        .map(normalize)
-        .batch(BATCH_SIZE)
-        .prefetch(tf.data.AUTOTUNE)
-    )
+    transform_test = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465),
+                             (0.2470, 0.2435, 0.2616))
+    ])
 
-    
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    train_set = torchvision.datasets.CIFAR10(
+        root='./data', train=True, download=True, transform=transform_train)
 
-    return train, test, ds_info
+    test_set = torchvision.datasets.CIFAR10(
+        root='./data', train=False, download=True, transform=transform_test)
+
+    train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True, num_workers=2)
+    test_loader = DataLoader(test_set, batch_size=BATCH_SIZE, shuffle=False, num_workers=2)
+
+    return train_loader, test_loader
