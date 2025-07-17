@@ -1,16 +1,16 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from config import LEARNING_RATE, EPOCHS
+from config import LEARNING_RATE, GAMMA , EPOCHS
 from plot import plot_training
+from torch.optim.lr_scheduler import *
 
 def train_model(model, train_loader, test_loader, device):
     criterion = nn.CrossEntropyLoss()
 
-    optimizer = optim.SGD(model.parameters(), lr=LEARNING_RATE,
-                        momentum=0.9, weight_decay=5e-4)
+    optimizer = optim.adamW(model.parameters(), lr=LEARNING_RATE,)
     
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max = EPOCHS)
+    scheduler = ExponentialLR(optimizer = optimizer, gamma = GAMMA)
 
     history = {"train_loss": [], "val_loss": [], "val_acc": []}
     best_acc = 0.0
