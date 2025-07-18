@@ -8,7 +8,7 @@ from torch.optim.lr_scheduler import *
 def train_model(model, train_loader, test_loader, device):
     criterion = nn.CrossEntropyLoss()
 
-    optimizer = optim.adamW(model.parameters(), lr=LEARNING_RATE,)
+    optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE,)
     
     scheduler = ExponentialLR(optimizer = optimizer, gamma = GAMMA)
 
@@ -49,8 +49,8 @@ def train_model(model, train_loader, test_loader, device):
             torch.save(model.state_dict(), "best_model.pth")
 
         scheduler.step()
-
-    plot_training(history)
+        plot_training(history)
+        
     print(f"Melhor acurácia de validação: {best_acc:.2f}%")
 
 

@@ -25,7 +25,7 @@ def load_data():
     test_set = torchvision.datasets.CIFAR10(
         root='./data', train = False, download = True, transform = transform_test)
 
-    train_loader = DataLoader(train_set, batch_size = BATCH_SIZE, shuffle = True, num_workers = os.cpu_count//2)
-    test_loader = DataLoader(test_set, batch_size = BATCH_SIZE, shuffle = False, num_workers = os.cpu_count//2)
+    train_loader = DataLoader(train_set, batch_size = BATCH_SIZE, shuffle = True, num_workers = os.cpu_count() // 2)
+    test_loader = DataLoader(test_set, batch_size = BATCH_SIZE, shuffle = False, num_workers = os.cpu_count() // 2)
 
     return train_loader, test_loader

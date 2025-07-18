@@ -24,4 +24,3 @@ def plot_training(history):
 
     plt.tight_layout()
     plt.savefig("training_plot.png")
-    plt.show()
