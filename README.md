@@ -1,280 +1,148 @@
-# CNN for CIFAR-10 Classification 🚀
+# 🖼️ CIFAR-10 CNN Classifier
 
-A deep Convolutional Neural Network implementation using PyTorch for high-accuracy image classification on the CIFAR-10 dataset.
+Um classificador de imagens usando Redes Neurais Convolucionais (CNN) para o dataset CIFAR-10, implementado em PyTorch com uma arquitetura moderna e técnicas de regularização avançadas.
 
-## 📋 Table of Contents
-- [Project Overview](#project-overview)
-- [Dataset](#dataset)
-- [Model Architecture](#model-architecture)
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Configuration](#configuration)
-- [Results](#results)
-- [Technical Details](#technical-details)
-- [Contributing](#contributing)
-- [License](#license)
+## 🎯 Sobre o Projeto
 
-## 🎯 Project Overview
+Este projeto implementa uma CNN profunda para classificação das 10 classes do dataset CIFAR-10:
+- ✈️ Avião
+- 🚗 Automóvel  
+- 🐦 Pássaro
+- 🐱 Gato
+- 🦌 Cervo
+- 🐕 Cachorro
+- 🐸 Sapo
+- 🐎 Cavalo
+- 🚢 Navio
+- 🚛 Caminhão
 
-This project implements a sophisticated Convolutional Neural Network using PyTorch to classify images from the CIFAR-10 dataset. The model achieves high accuracy through optimized architecture design, advanced data augmentation techniques, and careful hyperparameter tuning.
+## 🏗️ Arquitetura da Rede
 
-### Key Highlights
-- **Deep CNN Architecture**: 5-block convolutional structure with progressive feature extraction
-- **Advanced Data Augmentation**: AutoAugment policy specifically designed for CIFAR-10
-- **Optimized Training**: AdamW optimizer with exponential learning rate scheduling
-- **Real-time Monitoring**: Live training plots and model checkpointing
-- **GPU Acceleration**: Automatic CUDA detection and utilization
+A CNN implementada possui uma arquitetura robusta com:
 
-## 📊 Dataset
+- **5 blocos convolucionais** com filtros crescentes (32 → 64 → 128 → 256 → 512)
+- **Batch Normalization** para estabilizar o treinamento
+- **Dropout** para regularização (0.25, 0.3, 0.5)
+- **MaxPooling** para redução dimensional
+- **Classificador totalmente conectado** com 1024 neurônios
 
-**CIFAR-10** consists of:
-- **60,000** color images (32×32 pixels)
-- **10 classes**: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck
-- **50,000** training images + **10,000** test images
-- **Balanced distribution**: 6,000 images per class
+### Técnicas de Regularização
+- Data augmentation (crops aleatórios, flip horizontal, AutoAugment)
+- Normalização com estatísticas do CIFAR-10
+- Learning rate scheduling (decay exponencial)
+- Early stopping baseado na acurácia de validação
 
-The dataset is automatically downloaded on first run.
-
-## 🏗️ Model Architecture
-
-The CNN features a **5-block progressive architecture**:
+## 📁 Estrutura do Projeto
 
 ```
-Input (3×32×32)
-    ↓
-Block 1: Conv(32) → Conv(32) → MaxPool → Dropout(0.25)
-    ↓
-Block 2: Conv(64) → Conv(64) → MaxPool → Dropout(0.25)
-    ↓
-Block 3: Conv(128) → Conv(128) → MaxPool → Dropout(0.25)
-    ↓
-Block 4: Conv(256) → Conv(256) → MaxPool → Dropout(0.3)
-    ↓
-Block 5: Conv(512) → Conv(512) → MaxPool → Dropout(0.3)
-    ↓
-Classifier: Linear(512→1024) → Dropout(0.5) → Linear(1024→10)
+CNNforCIFAR10/
+├── config.py          # Configurações e hiperparâmetros
+├── data.py            # Carregamento e pré-processamento dos dados
+├── model.py           # Definição da arquitetura CNN
+├── train.py           # Loop de treinamento e avaliação
+├── plot.py            # Visualização dos resultados
+├── main.py            # Script principal
+└── README.md          # Este arquivo
 ```
 
-**Each convolutional block includes:**
-- 2× Conv2D layers (3×3 kernel, padding=1)
-- Batch Normalization after each convolution
-- ReLU activation functions
-- 2×2 MaxPooling for spatial reduction
-- Dropout for regularization
+## ⚙️ Configurações
 
-**Total Parameters**: ~11.7M trainable parameters
+| Parâmetro | Valor | Descrição |
+|-----------|-------|-----------|
+| Learning Rate | 0.001 | Taxa de aprendizado inicial |
+| Batch Size | 16 | Tamanho do lote |
+| Gamma | 0.97 | Fator de decay do learning rate |
+| Epochs | 100 | Número de épocas |
+| Image Size | 32×32 | Dimensão das imagens |
 
-## ✨ Features
+## 🚀 Como Usar
 
-- **Advanced Data Augmentation**:
-  - AutoAugment with CIFAR-10 optimized policies
-  - Random cropping with padding
-  - Random horizontal flipping
-  - Proper normalization with dataset statistics
+### Pré-requisitos
 
-- **Training Optimizations**:
-  - AdamW optimizer for better generalization
-  - Exponential learning rate decay (γ=0.97)
-  - Early stopping with best model checkpointing
-  - Real-time loss and accuracy plotting
-
-- **Performance Monitoring**:
-  - Live training progress visualization
-  - Automatic best model saving
-  - Comprehensive training history logging
-
-## 🔧 Requirements
-
-```
-torch >= 1.12.0
-torchvision >= 0.13.0
-matplotlib >= 3.5.0
-numpy >= 1.21.0
-```
-
-## 🚀 Installation
-
-1. **Clone the repository:**
 ```bash
-git clone https://github.com/EduardoTBuss/CNNforCIFAR10.git
-cd CNNforCIFAR10
+pip install torch torchvision matplotlib
 ```
 
-2. **Create virtual environment:**
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or
-venv\Scripts\activate     # Windows
-```
+### Executando o Treinamento
 
-3. **Install dependencies:**
-```bash
-pip install torch torchvision matplotlib numpy
-```
-
-## 💻 Usage
-
-### Training the Model
-
-Simply run the main script:
 ```bash
 python main.py
 ```
 
-The script will:
-- Automatically detect GPU/CPU
-- Download CIFAR-10 dataset
-- Train the model for 100 epochs
-- Generate live training plots
-- Save the best model as `best_model.pth`
+O script irá:
+1. Detectar automaticamente se GPU está disponível
+2. Baixar o dataset CIFAR-10 (primeira execução)
+3. Treinar o modelo com visualização em tempo real
+4. Salvar o melhor modelo como `best_model.pth`
+5. Gerar gráficos de treinamento em `training_plot.png`
 
-### Monitoring Training
+## 📊 Saídas do Treinamento
 
-Training progress is automatically plotted and saved as `training_plot.png`, showing:
-- Training and validation loss curves
-- Validation accuracy progression
-
-## 📁 Project Structure
+Durante o treinamento, você verá:
 
 ```
-CNNforCIFAR10/
-│
-├── config.py          # Training hyperparameters
-├── data.py            # Data loading and preprocessing
-├── main.py            # Main execution script
-├── model.py           # CNN architecture definition
-├── train.py           # Training and evaluation logic
-├── plot.py            # Visualization utilities
-├── requirements.txt   # Project dependencies
-└── README.md         # Project documentation
-│
-├── data/             # CIFAR-10 dataset (auto-downloaded)
-├── best_model.pth    # Best trained model weights
-└── training_plot.png # Training progress visualization
+Usando dispositivo: cuda
+Epoch [1/100] | Train Loss: 1.8234 | Val Loss: 1.6543 | Val Acc: 42.15%
+Epoch [2/100] | Train Loss: 1.5678 | Val Loss: 1.4321 | Val Acc: 48.72%
+...
+Melhor acurácia de validação: 89.45%
 ```
 
-## ⚙️ Configuration
+### Visualizações Geradas
 
-Edit `config.py` to modify training parameters:
+- **Gráfico de Loss**: Acompanha a evolução do loss de treino e validação
+- **Gráfico de Acurácia**: Monitora a acurácia de validação ao longo das épocas
 
-```python
-LEARNING_RATE = 0.001    # Initial learning rate
-BATCH_SIZE = 16          # Training batch size
-GAMMA = 0.97             # Learning rate decay factor
-EPOCHS = 100             # Number of training epochs
-IMG_SIZE = 32            # Input image size
-```
+## 🎯 Características Técnicas
 
-## 📈 Results
+### Data Augmentation
+- **RandomCrop**: Crops aleatórios com padding
+- **RandomHorizontalFlip**: Inversão horizontal aleatória  
+- **AutoAugment**: Políticas automáticas de augmentação para CIFAR-10
 
-### Training Configuration
-- **Optimizer**: AdamW with exponential LR scheduling
-- **Batch Size**: 16
-- **Initial Learning Rate**: 0.001 (decays by 0.97 each epoch)
-- **Training Time**: ~1 hours on GPU / ~X hours on CPU
-
-### Data Augmentation Impact
-- **AutoAugment**: Significantly improves generalization
-- **Random Crops**: Helps with translation invariance
-- **Horizontal Flips**: Doubles effective training data
-
-### Model Performance
-- **Best Validation Accuracy**: 94.6%
-- **Final Test Accuracy**: 94.1%
-- **Model Size**: ~46.8 MB
-- **Inference Speed**: ~X ms per image
-
-*Note: Update with your actual results*
-
-## 🔬 Technical Details
-
-### Data Preprocessing
-```python
-# Training transforms
-transforms.RandomCrop(32, padding=4)
-transforms.RandomHorizontalFlip()
-transforms.AutoAugment(CIFAR10 policy)
-transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], 
-                    std=[0.2023, 0.1994, 0.2010])
-```
-
-### Architecture Highlights
-- **Progressive Feature Extraction**: Channels increase from 32 to 512
-- **Regularization**: Dropout rates from 0.25 to 0.5
-- **Batch Normalization**: Accelerates training and improves stability
-- **Deep Structure**: 10 convolutional layers + 2 fully connected
-
-### Training Strategy
+### Otimização
+- **Optimizer**: AdamW (versão melhorada do Adam)
+- **Scheduler**: ExponentialLR para decay do learning rate
 - **Loss Function**: CrossEntropyLoss
-- **Optimizer**: AdamW (weight decay regularization)
-- **Learning Rate**: Exponential decay schedule
-- **Model Selection**: Best validation accuracy checkpointing
 
-## 🎯 Key Implementation Features
+### Hardware
+- **GPU**: Utilização automática se disponível
+- **CPU**: Paralelização com múltiplos workers no DataLoader
 
-1. **Automatic Device Detection**: Seamlessly switches between GPU/CPU
-2. **Efficient Data Loading**: Multi-worker data loading for faster training
-3. **Memory Optimization**: Proper batch sizing and gradient management
-4. **Visualization**: Real-time training progress monitoring
-5. **Reproducibility**: Consistent random seed handling
+## 📈 Resultados Esperados
 
-## 📊 Expected Performance
+Com esta arquitetura e configurações, você pode esperar:
+- **Acurácia de validação**: 85-93%
+- **Tempo de treinamento**: ~30-60 minutos (GPU) / 3-5 horas (CPU)
+- **Convergência**: Tipicamente entre 50-80 épocas
 
-Based on the architecture and training setup:
-- **Training Accuracy**: ~ %
-- **Validation Accuracy**: 92-95%
-- **Convergence**: ~80 epochs
-- **Overfitting**: Controlled through dropout and data augmentation
+## 🔧 Personalização
 
-## 🚀 Future Enhancements
+### Modificar Hiperparâmetros
+Edite o arquivo `config.py`:
 
-- [ ] Implement ResNet or DenseNet architectures
-- [ ] Add mixed precision training for faster convergence
-- [ ] Implement test-time augmentation
-- [ ] Add confusion matrix and per-class accuracy analysis
-- [ ] Experiment with different optimizers (SGD, RAdam)
-- [ ] Add model ensemble techniques
-- [ ] Implement gradient clipping
-- [ ] Add learning rate finder functionality
+```python
+LEARNING_RATE = 0.0005  # Reduzir para treinamento mais estável
+BATCH_SIZE = 32         # Aumentar se tiver mais VRAM
+EPOCHS = 150            # Mais épocas para melhor convergência
+```
 
-## 🛠️ Troubleshooting
+### Ajustar Arquitetura
+Modifique o arquivo `model.py` para:
+- Adicionar/remover camadas
+- Alterar tamanhos de filtros
+- Ajustar dropout rates
 
-**Common Issues:**
-- **Out of Memory**: Reduce batch size in `config.py`
-- **Slow Training**: Ensure CUDA is properly installed for GPU acceleration
-- **Poor Convergence**: Try adjusting learning rate or augmentation strength
+## 🤝 Contribuições
 
-## 🤝 Contributing
+Sinta-se à vontade para:
+- Reportar bugs
+- Sugerir melhorias
+- Implementar novas features
+- Otimizar a arquitetura
 
-Contributions are welcome! Please feel free to:
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
+## 📝 Licença
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
-- PyTorch team for the excellent deep learning framework
-- CIFAR-10 dataset creators (Alex Krizhevsky, Vinod Nair, Geoffrey Hinton)
-- AutoAugment authors for the data augmentation policies
-
-## 📧 Contact
-
-**Eduardo T. Buss** - [GitHub](https://github.com/EduardoTBuss)
-
-Project Link: [https://github.com/EduardoTBuss/CNNforCIFAR10](https://github.com/EduardoTBuss/CNNforCIFAR10)
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
 ---
-
-⭐ **If this project helped you, please consider giving it a star!**
-
-*Built with PyTorch 🔥 | Optimized for CIFAR-10 📊 | GPU Accelerated ⚡*
