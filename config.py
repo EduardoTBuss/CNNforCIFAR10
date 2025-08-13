@@ -1,5 +1,7 @@
-LEARNING_RATE = 0.001
-BATCH_SIZE = 16
-GAMMA = 0.97
-EPOCHS = 100
-IMG_SIZE = 32
+LEARNING_RATE  = 1e-3    
+WEIGHT_DECAY   = 1e-4           
+
+BATCH_SIZE     = 256
+
+EPOCHS         = 70
+IMG_SIZE       = 32
